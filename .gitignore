@@ -1,34 +1,5 @@
-# Python
 __pycache__/
-*.py[cod]
-*$py.class
-
-# Virtual Environment
-venv/
-env/
-ENV/
-
-# Distribution / packaging
-dist/
-build/
-*.egg-info/
-
-# IDE specific files
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# OS specific files
-.DS_Store
-Thumbs.db
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# Environment variables
+*.pyc
 .env
-.env.local
-
-# Logs
-*.log
+venv/
+.DS_Store
