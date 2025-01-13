@@ -71,11 +71,3 @@ This API is deployed on Render. Live version can be accessed at:
 
 If you'd like to contribute, please fork the repository and make changes as you'd like. Pull requests are warmly welcome.
 
-## License
-
-[Your chosen license]
-
-## Contact
-
-Your Name - your.email@example.com
-Project Link: [https://github.com/yourusername/crop-recommendation-api](https://github.com/yourusername/crop-recommendation-api)
