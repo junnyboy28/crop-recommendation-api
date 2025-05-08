@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crop Recommendation Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .result {
+            background-color: #f0f8ff;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .result h2 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .parameters {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .parameter {
+            margin-bottom: 8px;
+        }
+        a.button {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Crop Recommendation Results</h1>
+    
+    <div class="result">
+        <h2>Recommended Crop</h2>
+        <p><strong>{{ prediction }}</strong></p>
+    </div>
+    
+    <div class="parameters">
+        <h3>Your Input Parameters:</h3>
+        <div class="parameter"><strong>Nitrogen (N):</strong> {{ input_data.N }}</div>
+        <div class="parameter"><strong>Phosphorus (P):</strong> {{ input_data.P }}</div>
+        <div class="parameter"><strong>Potassium (K):</strong> {{ input_data.K }}</div>
+        <div class="parameter"><strong>Temperature:</strong> {{ input_data.temperature }}°C</div>
+        <div class="parameter"><strong>Humidity:</strong> {{ input_data.humidity }}%</div>
+        <div class="parameter"><strong>pH:</strong> {{ input_data.ph }}</div>
+        <div class="parameter"><strong>Rainfall:</strong> {{ input_data.rainfall }} mm</div>
+    </div>
+    
+    <a href="/" class="button">Try Another Prediction</a>
+</body>
+</html>

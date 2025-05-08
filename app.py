@@ -184,8 +184,11 @@ def index():
             # Create DataFrame with features
             input_df = pd.DataFrame([input_data])
             
-            # Scale the data before prediction (add this step)
-            input_scaled = scaler.transform(input_df[['N', 'P', 'K', 'temperature', 'humidity', 'ph', 'rainfall']])
+            # Scale the data before prediction
+            if scaler is not None:
+                input_scaled = scaler.transform(input_df[['N', 'P', 'K', 'temperature', 'humidity', 'ph', 'rainfall']])
+            else:
+                input_scaled = input_df[['N', 'P', 'K', 'temperature', 'humidity', 'ph', 'rainfall']].values
             
             # Make prediction with scaled data
             prediction = model.predict(input_scaled)[0]
@@ -198,15 +201,45 @@ def index():
             else:
                 prediction = str(prediction)
                 
-            # Render the results template
-            return render_template('results.html', prediction=prediction, input_data=input_data)
+            try:
+                # Try to render the template
+                return render_template('results.html', prediction=prediction, input_data=input_data)
+            except:
+                # Fall back to JSON response if template not found
+                return jsonify({
+                    "prediction": prediction, 
+                    "input_data": input_data,
+                    "status": "success"
+                })
         
         except Exception as e:
             error_message = str(e)
-            return render_template('index.html', error=error_message)
+            try:
+                return render_template('index.html', error=error_message)
+            except:
+                return jsonify({"error": error_message, "status": "failure"})
     else:
-        # Render the input form template
-        return render_template('index.html')
+        # Try to render the form template
+        try:
+            return render_template('index.html')
+        except:
+            # Return API information if templates are not available
+            return """
+            <h1>Crop Recommendation API</h1>
+            <p>This is a REST API for crop recommendations. Make POST requests to /predict with soil parameters.</p>
+            <p>Example POST body to /predict:</p>
+            <pre>
+            {
+                "N": 90,
+                "P": 42,
+                "K": 43,
+                "temperature": 20.879744,
+                "humidity": 82.002744,
+                "ph": 6.502985,
+                "rainfall": 202.935536
+            }
+            </pre>
+            """
 
 if __name__ == "__main__":
     app.run(debug=True)
