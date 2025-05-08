@@ -1,9 +1,9 @@
 Flask==2.3.3
 Werkzeug==2.3.7
-numpy>=1.26.0  # Updated for Python 3.12 compatibility
-scikit-learn>=1.6.0
+numpy==1.26.0  # Pin to exact version
+scikit-learn==1.6.0  # Pin to exact version
 joblib==1.2.0
 gunicorn==20.1.0
 flask-cors==4.0.0
-pandas>=2.0.0  
-catboost==1.2  # Change from 1.0.0 to 1.2
+pandas==2.0.0  # Pin to exact version
+catboost==1.2
