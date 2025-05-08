@@ -1,25 +1,61 @@
 from flask import Flask, request, jsonify, render_template
 import joblib
-import numpy as np
-import pandas as pd
+import os
+import sys
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
-# Load the trained model and scaler
-model = joblib.load("catboost_model.pkl")
-scaler = joblib.load("standard_scaler.pkl")  # Add this line to load the scaler
+# Initialize model and scaler as None
+model = None
+scaler = None
+
+# Try to load the models with error handling
+try:
+    # First, ensure we're importing these after NumPy is properly installed
+    import numpy as np
+    import pandas as pd
+    
+    print("Loading models...")
+    # Try to load the model file
+    model = joblib.load("catboost_model.pkl")
+    scaler = joblib.load("standard_scaler.pkl")
+    print("Models loaded successfully!")
+except Exception as e:
+    print(f"Error loading primary model: {e}")
+    try:
+        # Try alternative model
+        import numpy as np
+        import pandas as pd
+        model = joblib.load("crop_recommendation_model.pkl")
+        print("Alternative model loaded successfully!")
+    except Exception as e2:
+        print(f"Error loading alternative model: {e2}")
+        print("API will run in limited mode.")
 
 # API endpoint for health check
 @app.route("/api", methods=["GET"]) 
 def api_home():
-    return "Crop Recommendation API is running!"
+    model_status = "loaded" if model is not None else "not loaded"
+    scaler_status = "loaded" if scaler is not None else "not loaded"
+    return f"Crop Recommendation API is running! Model: {model_status}, Scaler: {scaler_status}"
 
 # API endpoint for prediction
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
+        # Check if model is available
+        if model is None:
+            return jsonify({
+                "error": "Model not loaded. The server is running in limited mode.",
+                "status": "failure"
+            }), 500
+        
+        # Import these here to ensure they're only used if model is loaded
+        import numpy as np
+        import pandas as pd
+        
         data = request.json
         if not data:
             return jsonify({"error": "No data provided"}), 400
@@ -33,10 +69,13 @@ def predict():
         # Create DataFrame with features
         input_df = pd.DataFrame([data])
         
-        # Scale the data before prediction (add this step)
-        input_scaled = scaler.transform(input_df[required_features])
+        # Scale the data if scaler is available
+        if scaler is not None:
+            input_scaled = scaler.transform(input_df[required_features])
+        else:
+            input_scaled = input_df[required_features].values
         
-        # Make prediction with scaled data
+        # Make prediction
         prediction = model.predict(input_scaled)[0]
         
         # Convert numpy type to Python native type
@@ -53,6 +92,8 @@ def predict():
         }), 200
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({
             "error": str(e),
             "status": "failure"
