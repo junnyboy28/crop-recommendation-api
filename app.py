@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template
-import joblib
 import os
 import sys
+import traceback
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -16,6 +16,7 @@ try:
     # First, ensure we're importing these after NumPy is properly installed
     import numpy as np
     import pandas as pd
+    import joblib
     
     print("Loading models...")
     # Try to load the model file
@@ -23,16 +24,8 @@ try:
     scaler = joblib.load("standard_scaler.pkl")
     print("Models loaded successfully!")
 except Exception as e:
-    print(f"Error loading primary model: {e}")
-    try:
-        # Try alternative model
-        import numpy as np
-        import pandas as pd
-        model = joblib.load("crop_recommendation_model.pkl")
-        print("Alternative model loaded successfully!")
-    except Exception as e2:
-        print(f"Error loading alternative model: {e2}")
-        print("API will run in limited mode.")
+    print(f"Error loading models: {e}")
+    traceback.print_exc()
 
 # API endpoint for health check
 @app.route("/api", methods=["GET"]) 
@@ -48,7 +41,7 @@ def predict():
         # Check if model is available
         if model is None:
             return jsonify({
-                "error": "Model not loaded. The server is running in limited mode.",
+                "error": "CatBoost model not loaded. The server is running in limited mode.",
                 "status": "failure"
             }), 500
         
@@ -92,7 +85,6 @@ def predict():
         }), 200
 
     except Exception as e:
-        import traceback
         traceback.print_exc()
         return jsonify({
             "error": str(e),
