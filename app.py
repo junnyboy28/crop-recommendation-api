@@ -27,6 +27,17 @@ except Exception as e:
     print(f"Error loading models: {e}")
     traceback.print_exc()
 
+# If models failed to load, try loading with a different catboost version
+if model is None:
+    try:
+        print("Trying to load model with different Catboost version...")
+        # Dynamically attempt to use the installed version
+        from catboost import CatBoostClassifier
+        model = joblib.load("catboost_model.pkl")
+        print("Model loaded successfully with alternative method!")
+    except Exception as e2:
+        print(f"Alternative loading also failed: {e2}")
+
 # API endpoint for health check
 @app.route("/api", methods=["GET"]) 
 def api_home():

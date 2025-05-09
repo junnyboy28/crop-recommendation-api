@@ -7,4 +7,4 @@ joblib==1.2.0
 gunicorn==20.1.0
 flask-cors==4.0.0
 pandas==2.0.0
-catboost==1.1.1  # Changed to more compatible version
+catboost==1.2  # Changed to available version
